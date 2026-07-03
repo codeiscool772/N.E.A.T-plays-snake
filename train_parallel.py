@@ -9,47 +9,10 @@ from typing import Any
 
 from . import config
 from .neat_brain import Genome
-from .snake_env import SnakeEnv
+from .worker import evaluate_genome_worker
 
 
-def evaluate_genome(genome_dict: dict[str, Any], seed: int, episodes: int = 1) -> float:
-    """Evaluate a genome.
-
-    Returns average fitness across episodes.
-
-    NOTE: Keep this function self-contained because it runs in subprocesses.
-    """
-    rng = random.Random(seed)
-    total = 0.0
-
-    genome = Genome.from_dict(genome_dict, rng=rng)
-    net = genome.build_network()
-
-    for ep in range(episodes):
-        env_seed = rng.randint(0, 2**31 - 1)
-        env = SnakeEnv(seed=env_seed)
-        obs = env.reset(seed=env_seed)
-        done = False
-        ep_reward = 0.0
-        ate_count = 0
-
-        steps = 0
-        while not done and steps < config.MAX_STEPS:
-            outputs = net.forward(obs)
-            action = max(range(4), key=lambda i: outputs[i])
-            res = env.step(action)
-            ep_reward += res.reward
-            ate_count += 1 if res.ate_food else 0
-            obs = res.obs
-            done = res.done
-            steps += 1
-
-        # Small bonus just to break ties early (if reward shaping is weak).
-        # This is still consistent with learning toward eating.
-        ep_reward += ate_count * 0.5
-        total += ep_reward
-
-    return total / max(1, episodes)
+# NOTE: genome evaluation moved to neat_snake/worker.py (subprocess-safe).
 
 
 
@@ -107,7 +70,7 @@ def train(seed: int = 0, generations: int | None = None, parallel_eval: int | No
 
             futures = {}
             for i, gd in enumerate(genome_dicts):
-                fut = ex.submit(evaluate_genome, gd, seeds[i], config.EPISODES_PER_GENOME)
+                fut = ex.submit(evaluate_genome_worker, gd, seeds[i], config.EPISODES_PER_GENOME)
                 futures[fut] = i
 
             for fut in as_completed(futures):
@@ -124,15 +87,17 @@ def train(seed: int = 0, generations: int | None = None, parallel_eval: int | No
                 best_fit = gen_best
                 best_genome = pop[order[0]].copy()
 
+                # Save immediately when we find a new global best.
+                save_best(best_genome)
+
             # Periodic checkpoint save (single-file overwrite)
             if best_genome is not None and (gen + 1) % checkpoint_every_gens == 0:
                 save_best(best_genome)
 
-            if gen_best > best_fit:
-                save_best(best_genome)
-
-
-            print(f"Gen {gen:03d} | best={gen_best:.3f} | avg={sum(fitness)/len(fitness):.3f} | global_best={best_fit:.3f}")
+            print(
+                f"Gen {gen:03d} | best={gen_best:.3f} | "
+                f"avg={sum(fitness)/len(fitness):.3f} | global_best={best_fit:.3f}"
+            )
 
             # Build next population
             next_pop: list[Genome] = []

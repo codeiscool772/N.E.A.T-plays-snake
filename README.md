@@ -1,8 +1,3 @@
-# download link
-
-https://www.dropbox.com/scl/fi/9rfykngo9d12yqqfuxdip/NeatSnake.exe?rlkey=4njn9ltfn4zuny0jbhbopl4m6&st=d7gubo28&dl=1
-
-
 # Neat Snake (NEAT + Headless-Friendly Live Rendering)
 
 A small NEAT-style neuroevolution experiment that learns to play **Snake** on a grid.
@@ -74,3 +69,6 @@ python -m neat_snake.main --watch-render --watch-sec=5 --watch-seed=111
 - If turtle crashes with a Tk/Tcl error, `render_episode()` automatically falls back to text output.
 - The watcher does not require any changes to training: it simply reads the checkpoint file that training already writes.
 
+## License
+
+Add your preferred license here (e.g., MIT).

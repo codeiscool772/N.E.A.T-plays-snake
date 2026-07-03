@@ -79,6 +79,6 @@ RENDER_TEXT = True
 
 # Turtle render pacing (human visible lag). 
 # Higher = slower rendering.
-RENDER_SLEEP_SEC = 0.25
+RENDER_SLEEP_SEC = 0.1
 
 

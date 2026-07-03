@@ -1,6 +1,7 @@
 # EXE Download Link
 https://www.dropbox.com/scl/fi/9rfykngo9d12yqqfuxdip/NeatSnake.exe?rlkey=4njn9ltfn4zuny0jbhbopl4m6&st=d7gubo28&dl=1
-
+ **warning:** IT WILL FLAG ANTIVIRUS BCAUSE I DO NOT HAVE A CERTIFICATE. CLICK RUN ANYWAYS.
+ (a certificate costs more than a 100 dollars a year and im not paying that for a side project)
 # Neat Snake (NEAT + Headless-Friendly Live Rendering)
 
 A small NEAT-style neuroevolution experiment that learns to play **Snake** on a grid.

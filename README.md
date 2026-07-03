@@ -72,6 +72,3 @@ python -m neat_snake.main --watch-render --watch-sec=5 --watch-seed=111
 - If turtle crashes with a Tk/Tcl error, `render_episode()` automatically falls back to text output.
 - The watcher does not require any changes to training: it simply reads the checkpoint file that training already writes.
 
-## License
-
-Add your preferred license here (e.g., MIT).
